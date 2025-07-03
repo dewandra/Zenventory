@@ -14,7 +14,16 @@ Route::get('/dashboard', function () {
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.
+    destroy');
+
+    Route::get('/products', \App\Livewire\Product\Index::class)
+         ->name('products.index')
+         ->middleware('can:manage products');
+
+    Route::get('/locations', \App\Livewire\Location\Index::class)
+         ->name('locations.index')
+         ->middleware('can:manage locations'); 
 });
 
 require __DIR__.'/auth.php';

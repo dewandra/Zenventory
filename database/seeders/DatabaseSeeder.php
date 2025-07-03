@@ -19,5 +19,13 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
+
+            $this->call(RolesAndPermissionsSeeder::class);
+
+        // (Opsional) Beri peran pada user pertama yang dibuat
+        $user = \App\Models\User::first();
+        if ($user) {
+            $user->assignRole('admin');
+        }
     }
 }
