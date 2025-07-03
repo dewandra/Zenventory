@@ -3,6 +3,8 @@
 namespace App\Livewire\Location;
 
 use App\Models\Location;
+use Livewire\Attributes\On;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -10,15 +12,11 @@ class Index extends Component
 {
     use WithPagination;
 
-    // Properti untuk mengontrol modal
-    public $isOpen = false;
-
-    // Properti lain
+    #[Url(except: '')]
     public $search = '';
     public $locationId;
     public $name, $zone, $aisle, $rack, $bin;
 
-    // Aturan validasi
     protected $rules = [
         'name' => 'required|string|max:255',
         'zone' => 'nullable|string',
@@ -29,7 +27,8 @@ class Index extends Component
 
     public function render()
     {
-        $locations = Location::where('name', 'like', '%' . $this->search . '%')
+        $locations = Location::query()
+            ->where('name', 'like', '%' . $this->search . '%')
             ->latest()
             ->paginate(10);
 
@@ -41,19 +40,20 @@ class Index extends Component
     public function create()
     {
         $this->resetInputFields();
-        $this->openModal();
-    }
-
-    public function openModal()
-    {
-        $this->isOpen = true;
+        // Kirim event untuk membuka modal
+        $this->dispatch('open-modal', 'location-form');
     }
 
     public function closeModal()
     {
-        $this->isOpen = false;
+        // Kirim event untuk menutup modal
+        $this->dispatch('close-modal', 'location-form');
     }
 
+    public function updatedSearch()
+    {
+        $this->resetPage();
+    }
     private function resetInputFields()
     {
         $this->locationId = null;
@@ -67,7 +67,6 @@ class Index extends Component
 
     public function store()
     {
-        // Menambahkan validasi unik secara manual
         $this->validate(array_merge($this->rules, [
             'name' => 'required|string|max:255|unique:locations,name,' . $this->locationId
         ]));
@@ -97,9 +96,16 @@ class Index extends Component
         $this->aisle = $location->aisle;
         $this->rack = $location->rack;
         $this->bin = $location->bin;
-        $this->openModal();
-    }
 
+        // Kirim event untuk membuka modal
+        $this->dispatch('open-modal', 'location-form');
+    }
+    public function confirmDelete($id)
+    {
+        $this->dispatch('show-delete-confirmation', $id);
+    }
+    
+    #[On('delete-confirmed')]
     public function delete($id)
     {
         Location::find($id)->delete();

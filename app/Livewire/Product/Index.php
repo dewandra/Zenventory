@@ -3,14 +3,15 @@
 namespace App\Livewire\Product;
 
 use App\Models\Product;
+use Livewire\Attributes\On;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class Index extends Component
 {
     use WithPagination;
-
-    public $isOpen = false;
+    #[Url(except: '')]
     public $search = '';
     public $productId;
     public $sku, $name, $description;
@@ -21,10 +22,21 @@ class Index extends Component
         'description' => 'nullable|string',
     ];
 
+        public function updatedSearch()
+    {
+        $this->resetPage();
+    }
     public function render()
     {
-        $products = Product::where('name', 'like', '%' . $this->search . '%')
-            ->orWhere('sku', 'like', '%' . $this->search . '%')
+        // Query ini sudah benar dan robust
+        $products = Product::query()
+            ->where(function ($query) {
+                // Pastikan $this->search tidak kosong sebelum menjalankan query
+                if (!empty($this->search)) {
+                    $query->where('name', 'like', '%' . $this->search . '%')
+                          ->orWhere('sku', 'like', '%' . $this->search . '%');
+                }
+            })
             ->latest()
             ->paginate(10);
 
@@ -36,19 +48,15 @@ class Index extends Component
     public function create()
     {
         $this->resetInputFields();
-        $this->openModal();
-    }
-
-    public function openModal()
-    {
-        $this->isOpen = true;
+        // Kirim event untuk membuka modal
+        $this->dispatch('open-modal', 'product-form');
     }
 
     public function closeModal()
     {
-        $this->isOpen = false;
+        // Kirim event untuk menutup modal
+        $this->dispatch('close-modal', 'product-form');
     }
-
     private function resetInputFields()
     {
         $this->productId = null;
@@ -60,7 +68,6 @@ class Index extends Component
 
     public function store()
     {
-        // Menambahkan validasi unik secara manual di sini
         $this->validate(array_merge($this->rules, [
             'sku' => 'required|unique:products,sku,' . $this->productId
         ]));
@@ -86,9 +93,18 @@ class Index extends Component
         $this->sku = $product->sku;
         $this->name = $product->name;
         $this->description = $product->description;
-        $this->openModal();
+
+        // Kirim event untuk membuka modal
+        $this->dispatch('open-modal', 'product-form');
     }
 
+    public function confirmDelete($id)
+    {
+        // Kirim event dengan ID sebagai parameter tunggal, bukan array
+        $this->dispatch('show-delete-confirmation', $id);
+    }
+    
+    #[On('delete-confirmed')]
     public function delete($id)
     {
         Product::find($id)->delete();
