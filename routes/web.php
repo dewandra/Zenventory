@@ -24,6 +24,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/locations', \App\Livewire\Location\Index::class)
          ->name('locations.index')
          ->middleware('can:manage locations'); 
+
+    Route::get('/inbound/receive', \App\Livewire\Inbound\Receive::class)
+         ->name('inbound.receive')
+         ->middleware('can:perform inbound');
+    
+             Route::get('/inbound/history', \App\Livewire\Inbound\History::class)
+         ->name('inbound.history')
+         ->middleware('can:perform inbound');
 });
 
 require __DIR__.'/auth.php';
