@@ -18,7 +18,12 @@
         
         @include('layouts.partials.sidebar')
 
-        <div class="md:pl-72">
+        {{-- 
+            PERUBAHAN PADA CONTAINER UTAMA
+            - `md:pl-72` (18rem) diubah menjadi `md:pl-80` (20rem).
+            - Ini menambahkan jarak ekstra untuk mengkompensasi margin baru pada sidebar.
+        --}}
+        <div class="md:pl-80">
             <div class="mx-auto flex max-w-7xl flex-col md:px-8 xl:px-0">
                 
                 <div class="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-x-6 border-b border-gray-200 bg-white px-4 shadow-sm sm:px-6 md:hidden">
