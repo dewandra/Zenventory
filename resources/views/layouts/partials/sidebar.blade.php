@@ -1,8 +1,4 @@
-<div>
-    {{-- ====================================================== --}}
-    {{--        PERBAIKAN TOTAL PADA MOBILE SIDEBAR             --}}
-    {{-- ====================================================== --}}
-    <div 
+<div><div 
         x-show="sidebarOpen" 
         class="relative z-50 md:hidden" 
         x-ref="dialog" 
@@ -19,16 +15,10 @@
             x-transition:leave-start="opacity-100" 
             x-transition:leave-end="opacity-0" 
             class="fixed inset-0 bg-gray-900/80"
-            @click="sidebarOpen = false" {{-- Tambahkan ini agar bisa tutup saat klik area gelap --}}
+            @click="sidebarOpen = false"
         ></div>
 
         <div class="fixed inset-0 flex">
-            {{-- 
-                PERUBAHAN UTAMA:
-                - Class `mr-16` dan `flex-1` dihapus.
-                - `max-w-xs` diubah menjadi `max-w-sm` agar sedikit lebih lebar.
-                - Tombol tutup dipindahkan ke dalam.
-            --}}
             <div 
                 x-show="sidebarOpen"
                 x-transition:enter="transition ease-in-out duration-300 transform" 
@@ -39,7 +29,6 @@
                 x-transition:leave-end="-translate-x-full" 
                 class="relative flex w-full max-w-sm flex-col bg-white"
             >
-                {{-- Tombol Close SEKARANG DI DALAM dan di kanan atas --}}
                 <div class="absolute right-0 top-0 -mr-12 pt-2">
                     <button 
                         type="button" 
@@ -54,7 +43,6 @@
                     </button>
                 </div>
                 
-                {{-- Konten Sidebar Mobile dengan Layout Baru --}}
                 <div class="flex h-full flex-col overflow-y-auto bg-white py-6 shadow-xl">
                     <div class="px-4 sm:px-6">
                         <div class="flex items-center space-x-3">
@@ -80,6 +68,9 @@
                             <li>{!! navLinkMobile('dashboard', '<svg class="h-6 w-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>', 'Dashboard') !!}</li>
                             <li>{!! navLinkMobile('products.index', '<svg class="h-6 w-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 8v5z"></path></svg>', 'Products') !!}</li>
                             <li>{!! navLinkMobile('locations.index', '<svg class="h-6 w-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>', 'Locations') !!}</li>
+                            {{-- PERBAIKAN: Menggunakan navLinkMobile dan ditambahkan untuk inbound --}}
+                            <li>{!! navLinkMobile('inbound.receive', '<svg class="h-6 w-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>', 'Receive Items') !!}</li>
+                            <li>{!! navLinkMobile('inbound.history', '<svg class="h-6 w-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>', 'Inbound History') !!}</li>
                         </ul>
                     </nav>
                 </div>
@@ -87,7 +78,7 @@
         </div>
     </div>
 
-    {{-- DESKTOP SIDEBAR (TIDAK DIUBAH) --}}
+    {{-- DESKTOP SIDEBAR --}}
     <div class="hidden md:fixed md:inset-y-4 md:left-4 md:z-50 md:flex md:w-72 md:flex-col">
         <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 py-4 rounded-xl shadow-lg">
             <div class="flex h-16 shrink-0 items-center space-x-3">
@@ -114,6 +105,11 @@
                             <li>{!! navLink('dashboard', '<svg class="h-6 w-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>', 'Dashboard') !!}</li>
                             <li>{!! navLink('products.index', '<svg class="h-6 w-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 8v5z"></path></svg>', 'Products') !!}</li>
                             <li>{!! navLink('locations.index', '<svg class="h-6 w-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>', 'Locations') !!}</li>
+                            {{-- PERBAIKAN: Menambahkan link inbound ke sidebar desktop --}}
+                            <li>{!! navLink('inbound.receive', '<svg class="h-6 w-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>', 'Receive Items') !!}</li>
+
+                            <li>{!! navLink('inbound.history', '<svg class="h-6 w-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>', 'Inbound History') !!}</li>
+
                         </ul>
                     </li>
                 </ul>
