@@ -24,6 +24,11 @@ class Index extends Component
         'rack' => 'nullable|string',
         'bin' => 'nullable|string',
     ];
+    
+    public function updatedSearch()
+    {
+        $this->resetPage();
+    }
 
     public function render()
     {
@@ -37,23 +42,6 @@ class Index extends Component
         ])->layout('layouts.app');
     }
 
-    public function create()
-    {
-        $this->resetInputFields();
-        // Kirim event untuk membuka modal
-        $this->dispatch('open-modal', 'location-form');
-    }
-
-    public function closeModal()
-    {
-        // Kirim event untuk menutup modal
-        $this->dispatch('close-modal', 'location-form');
-    }
-
-    public function updatedSearch()
-    {
-        $this->resetPage();
-    }
     private function resetInputFields()
     {
         $this->locationId = null;
@@ -63,6 +51,12 @@ class Index extends Component
         $this->rack = '';
         $this->bin = '';
         $this->resetErrorBag();
+    }
+
+    public function closeModal()
+    {
+        $this->resetInputFields();
+        $this->dispatch('close-modal', 'location-form');
     }
 
     public function store()
@@ -85,6 +79,7 @@ class Index extends Component
         ]);
 
         $this->closeModal();
+        $this->resetInputFields(); // Pastikan reset dipanggil di sini juga
     }
 
     public function edit($id)
@@ -97,9 +92,9 @@ class Index extends Component
         $this->rack = $location->rack;
         $this->bin = $location->bin;
 
-        // Kirim event untuk membuka modal
         $this->dispatch('open-modal', 'location-form');
     }
+
     public function confirmDelete($id)
     {
         $this->dispatch('show-delete-confirmation', $id);

@@ -3,14 +3,15 @@
 namespace App\Livewire\Product;
 
 use App\Models\Product;
+use Livewire\Component;
+use Livewire\WithPagination; // <-- PASTIKAN INI ADA LAGI
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
-use Livewire\Component;
-use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination;
+    use WithPagination; // <-- PASTIKAN INI ADA LAGI
+
     #[Url(except: '')]
     public $search = '';
     public $productId;
@@ -21,42 +22,31 @@ class Index extends Component
         'name' => 'required|string|max:255',
         'description' => 'nullable|string',
     ];
+    
 
-        public function updatedSearch()
+    // Method ini akan mereset pagination saat ada pencarian baru
+    public function updatedSearch()
     {
         $this->resetPage();
     }
+
     public function render()
     {
-        // Query ini sudah benar dan robust
         $products = Product::query()
             ->where(function ($query) {
-                // Pastikan $this->search tidak kosong sebelum menjalankan query
                 if (!empty($this->search)) {
                     $query->where('name', 'like', '%' . $this->search . '%')
                           ->orWhere('sku', 'like', '%' . $this->search . '%');
                 }
             })
             ->latest()
-            ->paginate(10);
+            ->paginate(10); // <-- Gunakan paginate() lagi
 
         return view('livewire.product.index', [
             'products' => $products,
         ])->layout('layouts.app');
     }
 
-    public function create()
-    {
-        $this->resetInputFields();
-        // Kirim event untuk membuka modal
-        $this->dispatch('open-modal', 'product-form');
-    }
-
-    public function closeModal()
-    {
-        // Kirim event untuk menutup modal
-        $this->dispatch('close-modal', 'product-form');
-    }
     private function resetInputFields()
     {
         $this->productId = null;
@@ -64,6 +54,12 @@ class Index extends Component
         $this->name = '';
         $this->description = '';
         $this->resetErrorBag();
+    }
+    
+    public function closeModal()
+    {
+        $this->resetInputFields(); 
+        $this->dispatch('close-modal', 'product-form');
     }
 
     public function store()
@@ -84,6 +80,7 @@ class Index extends Component
         ]);
 
         $this->closeModal();
+        $this->resetInputFields();
     }
 
     public function edit($id)
@@ -94,13 +91,11 @@ class Index extends Component
         $this->name = $product->name;
         $this->description = $product->description;
 
-        // Kirim event untuk membuka modal
         $this->dispatch('open-modal', 'product-form');
     }
-
+    
     public function confirmDelete($id)
     {
-        // Kirim event dengan ID sebagai parameter tunggal, bukan array
         $this->dispatch('show-delete-confirmation', $id);
     }
     

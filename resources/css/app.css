@@ -1,3 +1,76 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+/* Tambahkan CSS untuk SweetAlert2 Toast Custom */
+.colored-toast .swal2-title {
+    color: white;
+}
+
+.colored-toast .swal2-close {
+    color: white;
+}
+
+.colored-toast .swal2-html-container {
+    color: white;
+}
+
+/* Warna untuk notifikasi sukses (hijau) */
+.colored-toast.success-toast {
+    background-color: #a5dc86 !important;
+}
+
+/* Warna untuk notifikasi error (merah) */
+.colored-toast.error-toast {
+    background-color: #f27474 !important;
+}
+
+/* (Opsional) Tambahkan warna lain jika perlu */
+.colored-toast.warning-toast {
+    background-color: #f8bb86 !important;
+}
+
+/* Mengatur container popup utama */
+.custom-swal-popup {
+    @apply rounded-xl border-t-8 shadow-2xl;
+}
+
+/* Memberi warna pada border atas sesuai jenis ikon */
+.custom-swal-popup.swal2-icon-warning {
+    @apply border-yellow-400;
+}
+.custom-swal-popup.swal2-icon-error {
+    @apply border-red-500;
+}
+
+/* Mengatur style header (area ikon dan judul) */
+.custom-swal-header {
+    @apply pt-8;
+}
+
+/* Memperbesar ikon peringatan */
+.custom-swal-icon.swal2-icon-warning {
+    @apply w-20 h-20 text-yellow-500 border-yellow-500;
+    border-width: 4px; /* Menebalkan border ikon */
+}
+
+/* Mengatur style judul */
+.custom-swal-title {
+    @apply text-2xl font-bold text-gray-800;
+}
+
+/* Mengatur style tombol yang sudah ada agar lebih pas */
+.swal-confirm-button, .swal-cancel-button {
+    @apply font-semibold text-sm uppercase tracking-wider py-2.5 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 transition ease-in-out duration-150 mx-2;
+}
+
+/* Tombol Hapus (Merah) */
+.swal-confirm-button {
+    @apply bg-red-600 text-white hover:bg-red-700 focus:ring-red-500;
+}
+
+/* Tombol Batal (Abu-abu, dibuat lebih subtle) */
+.swal-cancel-button {
+    @apply bg-transparent text-gray-500 hover:bg-gray-100 border border-gray-300;
+}
