@@ -32,6 +32,15 @@ Route::middleware('auth')->group(function () {
              Route::get('/inbound/history', \App\Livewire\Inbound\History::class)
          ->name('inbound.history')
          ->middleware('can:perform inbound');
+
+    Route::get('/outbound/allocation', \App\Livewire\Outbound\Allocation::class)
+         ->name('outbound.allocation')
+         ->middleware('can:perform outbound');
+
+             Route::get('/orders', \App\Livewire\Order\Index::class)
+        ->name('orders.index')
+        ->middleware('can:perform outbound'); 
 });
+
 
 require __DIR__.'/auth.php';
