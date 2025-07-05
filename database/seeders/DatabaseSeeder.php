@@ -22,6 +22,8 @@ class DatabaseSeeder extends Seeder
 
             $this->call(RolesAndPermissionsSeeder::class);
 
+            $this->call(LocationSeeder::class);
+
         // (Opsional) Beri peran pada user pertama yang dibuat
         $user = \App\Models\User::first();
         if ($user) {
