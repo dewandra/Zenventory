@@ -19,14 +19,20 @@ class Allocation extends Component
     public ?Collection $picklist = null;
     public $allocationError = '';
 
+    // Tambahkan pesan validasi custom
+    protected $messages = [
+        'searchOrder.required' => 'Nomor Sales Order wajib diisi sebelum mencari.',
+    ];
+
     public function search()
     {
-        $this->resetAll();
+        // Validasi akan menggunakan pesan custom di atas
         $this->validate(['searchOrder' => 'required|string']);
-
-        $order = Order::with('details.product') // Eager load untuk performa
+        
+        $this->reset(['selectedOrder', 'picklist', 'allocationError']);
+        $order = Order::with('details.product')
                       ->where('order_number', $this->searchOrder)
-                      ->where('status', 'pending') // Hanya cari order yang belum diproses
+                      ->where('status', 'pending')
                       ->first();
 
         if ($order) {
@@ -54,7 +60,6 @@ class Allocation extends Component
                 
                 $fullPicklist = $fullPicklist->merge($allocatedItemsWithProduct);
             }
-            // Urutkan picklist akhir berdasarkan lokasi
             $this->picklist = $fullPicklist->sortBy('bin')->sortBy('rack')->sortBy('aisle')->sortBy('zone')->values();
 
         } catch (InsufficientStockException $e) {
@@ -73,7 +78,6 @@ class Allocation extends Component
         try {
             DB::transaction(function () {
                 foreach ($this->picklist as $item) {
-                    // Kunci baris untuk mencegah race condition
                     $batch = InventoryBatch::where('id', $item['batch_id'])->lockForUpdate()->first();
 
                     if (!$batch || $batch->quantity < $item['quantity_to_pick']) {

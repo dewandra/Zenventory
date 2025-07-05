@@ -6,17 +6,20 @@
         </div>
 
         <div class="mb-6">
-            <form wire:submit.prevent="search" class="flex items-center gap-x-4">
+            <div class="flex items-center gap-x-4">
                 <div class="flex-grow">
-                    <label for="searchOrder" class="sr-only">Cari Nomor Pesanan</label>
-                    <x-text-input type="text" wire:model="searchOrder" id="searchOrder" class="w-full text-lg" placeholder="Masukkan Nomor Sales Order..." />
+                    <label for="searchOrder" class="sr-only">Cari Nomor Order</label>
+                    
+                    <x-text-input type="text" wire:model="searchOrder" wire:keydown.enter="search" id="searchOrder" class="w-full text-lg" placeholder="Masukkan Nomor Sales Order..." />
+                    
                     @error('searchOrder') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
-                <button type="submit" wire:loading.attr="disabled" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-6 rounded-lg text-lg">
-                    <span wire:loading.remove>Cari</span>
-                    <span wire:loading>Mencari...</span>
+                
+                <button type="button" wire:click="search" wire:loading.attr="disabled" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-6 rounded-lg text-lg">
+                    <span wire:loading.remove wire:target="search">Cari</span>
+                    <span wire:loading wire:target="search">Mencari...</span>
                 </button>
-            </form>
+            </div>
         </div>
 
         @if ($selectedOrder)
@@ -44,8 +47,8 @@
                             <p class="text-sm text-red-600 font-semibold mr-4 animate-pulse">{{ $allocationError }}</p>
                         @endif
                         <button wire:click="generatePicklist" wire:loading.attr="disabled" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg text-base">
-                            <span wire:loading.remove>🚀 Hasilkan Picklist</span>
-                            <span wire:loading>Memproses...</span>
+                            <span wire:loading.remove wire:target="generatePicklist">🚀 Hasilkan Picklist</span>
+                            <span wire:loading wire:target="generatePicklist">Memproses...</span>
                         </button>
                     </div>
                 @endif
@@ -64,7 +67,7 @@
                             <tr>
                                 <th class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">Lokasi</th>
                                 <th class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Produk</th>
-                                <th class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">LPN / Batch</th>
+                                <th class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">LPN</th>
                                 <th class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Tgl. Kedaluwarsa</th>
                                 <th class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Jumlah Ambil</th>
                             </tr>
