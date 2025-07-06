@@ -38,7 +38,14 @@
 
                  <div class="mt-6 border-t pt-6">
                      <x-input-label for="reason" value="Alasan Penyesuaian" />
-                     <textarea wire:model="reason" id="reason" rows="3" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" placeholder="Contoh: Barang rusak karena banjir, Ditemukan stok lebih, Hasil cycle count, dll."></textarea>
+                        <select wire:model="reason" id="reason" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                            <option value="">-- Pilih Alasan --</option>
+                            <option value="Hasil Cycle Count">Hasil Cycle Count</option>
+                            <option value="Barang Rusak (Damaged)">Barang Rusak (Damaged)</option>
+                            <option value="Barang Hilang (Shrinkage)">Barang Hilang (Shrinkage)</option>
+                            <option value="Ditemukan Stok Lebih">Ditemukan Stok Lebih</option>
+                            <option value="Koreksi Kesalahan Input">Koreksi Kesalahan Input</option>
+                        </select>
                      @error('reason') <p class="text-red-500 text-xs mt-1">{{ $message }}</p @enderror
                 </div>
 

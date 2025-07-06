@@ -65,7 +65,7 @@ class Adjustment extends Component
                     'quantity_change' => $quantityChange,
                     'to_location_id' => $this->selectedBatch->location_id, // Lokasi tidak berubah
                     'user_id' => Auth::id(),
-                    // Anda bisa menambahkan 'notes' atau 'reason' di tabel movements jika perlu
+                    'notes' => $this->reason, 
                 ]);
             });
 
