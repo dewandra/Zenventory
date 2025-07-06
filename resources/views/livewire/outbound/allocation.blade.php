@@ -9,12 +9,9 @@
             <div class="flex items-center gap-x-4">
                 <div class="flex-grow">
                     <label for="searchOrder" class="sr-only">Cari Nomor Order</label>
-                    
                     <x-text-input type="text" wire:model="searchOrder" wire:keydown.enter="search" id="searchOrder" class="w-full text-lg" placeholder="Masukkan Nomor Sales Order..." />
-                    
                     @error('searchOrder') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
-                
                 <button type="button" wire:click="search" wire:loading.attr="disabled" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-6 rounded-lg text-lg">
                     <span wire:loading.remove wire:target="search">Cari</span>
                     <span wire:loading wire:target="search">Mencari...</span>
@@ -41,7 +38,7 @@
                     </ul>
                 </div>
 
-                @if (!$picklist)
+                @if (!$activePicklist)
                     <div class="mt-6 flex justify-end items-center">
                          @if ($allocationError)
                             <p class="text-sm text-red-600 font-semibold mr-4 animate-pulse">{{ $allocationError }}</p>
@@ -55,10 +52,13 @@
             </div>
         @endif
         
-        @if ($picklist && $picklist->isNotEmpty())
+        @if ($activePicklist)
             <div class="border-t border-gray-200 mt-6 pt-6 print-section">
                 <div class="flex justify-between items-center no-print">
-                    <h3 class="text-xl font-semibold leading-7 text-gray-900">✅ Picklist Teroptimasi (Urut Lokasi)</h3>
+                    <div>
+                        <h3 class="text-xl font-semibold leading-7 text-gray-900">✅ Picklist Dibuat: {{ $activePicklist->picklist_number }}</h3>
+                        <p class="text-sm text-gray-500">Status: <span class="font-semibold">{{ ucfirst($activePicklist->status) }}</span></p>
+                    </div>
                     <button onclick="window.print()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg">🖨️ Cetak</button>
                 </div>
                 <div class="mt-6 flow-root">
@@ -68,32 +68,32 @@
                                 <th class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">Lokasi</th>
                                 <th class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Produk</th>
                                 <th class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">LPN</th>
-                                <th class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Tgl. Kedaluwarsa</th>
                                 <th class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Jumlah Ambil</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
-                            @foreach($picklist as $item)
+                            @foreach($activePicklist->items as $item)
                                 <tr class="hover:bg-gray-50">
-                                    <td class="whitespace-nowrap py-4 pl-4 pr-3 text-lg font-bold text-gray-900 sm:pl-0">{{ $item['location_name'] }}</td>
+                                    <td class="whitespace-nowrap py-4 pl-4 pr-3 text-lg font-bold text-gray-900 sm:pl-0">{{ $item->location_name }}</td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-800">
-                                        {{ $item['product_name'] }}
-                                        <span class="block text-xs text-gray-500">{{ $item['product_sku'] }}</span>
+                                        {{ $item->product_name }}
+                                        <span class="block text-xs text-gray-500">{{ $item->product_sku }}</span>
                                     </td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ $item['lpn'] }}</td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-red-600 font-medium">{{ $item['expiry_date'] ? $item['expiry_date']->format('d M Y') : 'N/A' }}</td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-2xl font-bold text-blue-600 text-center">{{ $item['quantity_to_pick'] }}</td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ $item->lpn }}</td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-2xl font-bold text-blue-600 text-center">{{ $item->quantity_to_pick }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
+                @if ($activePicklist->status != 'completed')
                 <div class="mt-8 flex items-center justify-end gap-x-6 border-t border-gray-200 pt-6 no-print">
-                    <button type="button" wire:click="generatePicklist" class="text-sm font-semibold leading-6 text-gray-900">Buat Ulang Picklist</button>
+                    <button type="button" wire:click="resetAll" class="text-sm font-semibold leading-6 text-gray-900">Batal</button>
                     <button type="button" wire:click="confirmPicking" wire:loading.attr="disabled" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg text-base">
                         Konfirmasi Selesai Picking
                     </button>
                 </div>
+                @endif
             </div>
         @endif
     </div>

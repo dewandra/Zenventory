@@ -16,4 +16,9 @@ class Location extends Model
         'rack', // Rak
         'bin', // Ambalan/Level
     ];
+
+    public function inventoryBatches()
+    {
+        return $this->hasMany(InventoryBatch::class);
+    }
 }

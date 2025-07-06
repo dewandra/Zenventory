@@ -2,15 +2,16 @@
 
 namespace App\Livewire\Product;
 
+use App\Helpers\LogActivity;
 use App\Models\Product;
 use Livewire\Component;
-use Livewire\WithPagination; // <-- PASTIKAN INI ADA LAGI
+use Livewire\WithPagination;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 
 class Index extends Component
 {
-    use WithPagination; // <-- PASTIKAN INI ADA LAGI
+    use WithPagination;
 
     #[Url(except: '')]
     public $search = '';
@@ -22,9 +23,8 @@ class Index extends Component
         'name' => 'required|string|max:255',
         'description' => 'nullable|string',
     ];
-    
 
-    // Method ini akan mereset pagination saat ada pencarian baru
+
     public function updatedSearch()
     {
         $this->resetPage();
@@ -36,7 +36,7 @@ class Index extends Component
             ->where(function ($query) {
                 if (!empty($this->search)) {
                     $query->where('name', 'like', '%' . $this->search . '%')
-                          ->orWhere('sku', 'like', '%' . $this->search . '%');
+                        ->orWhere('sku', 'like', '%' . $this->search . '%');
                 }
             })
             ->latest()
@@ -55,10 +55,10 @@ class Index extends Component
         $this->description = '';
         $this->resetErrorBag();
     }
-    
+
     public function closeModal()
     {
-        $this->resetInputFields(); 
+        $this->resetInputFields();
         $this->dispatch('close-modal', 'product-form');
     }
 
@@ -68,11 +68,17 @@ class Index extends Component
             'sku' => 'required|unique:products,sku,' . $this->productId
         ]));
 
-        Product::updateOrCreate(['id' => $this->productId], [
+        $product = Product::updateOrCreate(['id' => $this->productId], [
             'sku' => $this->sku,
             'name' => $this->name,
             'description' => $this->description,
         ]);
+
+        // --- LOGGING ---
+        $action = $this->productId ? 'updated_product' : 'created_product';
+        $description = "User " . auth()->user()->name . " {$action} with name '{$product->name}'";
+        LogActivity::add($action, $description);
+        // --- END LOGGING ---        
 
         $this->dispatch('alert', [
             'type' => 'success',
@@ -93,16 +99,30 @@ class Index extends Component
 
         $this->dispatch('open-modal', 'product-form');
     }
-    
+
     public function confirmDelete($id)
     {
         $this->dispatch('show-delete-confirmation', $id);
     }
-    
+
+    // #[On('delete-confirmed')]
+    // public function delete($id)
+    // {
+    //     Product::find($id)->delete();
+    //     $this->dispatch('alert', ['type' => 'success', 'message' => 'Produk berhasil dihapus.']);
+    // }
     #[On('delete-confirmed')]
     public function delete($id)
     {
-        Product::find($id)->delete();
-        $this->dispatch('alert', ['type' => 'success', 'message' => 'Produk berhasil dihapus.']);
+        $product = Product::find($id);
+        if ($product) {
+            // --- LOGGING ---
+            $description = "User " . auth()->user()->name . " deleted product '{$product->name}' (SKU: {$product->sku})";
+            LogActivity::add('deleted_product', $description);
+            // --- END LOGGING ---
+
+            $product->delete();
+            $this->dispatch('alert', ['type' => 'success', 'message' => 'Produk berhasil dihapus.']);
+        }
     }
 }

@@ -87,6 +87,10 @@ class Index extends Component
     {
         $this->resetForm();
         $this->addDetail();
+
+        // TAMBAHKAN BARIS INI untuk mengatur status default
+        $this->status = 'pending'; 
+        
         $this->dispatch('open-modal', 'order-form');
     }
 
