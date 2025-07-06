@@ -19,6 +19,9 @@ class Receive extends Component
 
     public $searchProduct = '';
     public $searchLocation = '';
+    
+    public $products = [];
+    public $locations = [];
 
     protected $rules = [
         'productId' => 'required|exists:products,id',
@@ -27,9 +30,57 @@ class Receive extends Component
         'expiry_date' => 'nullable|date',
     ];
 
+    /**
+     * Fungsi ini dijalankan setiap kali ada perubahan pada properti yang di-binding
+     * dengan wire:model.live.
+     */
+    public function updated($name)
+    {
+        // Jika mengubah kolom pencarian produk
+        if ($name === 'searchProduct' && strlen($this->searchProduct) > 2) {
+            $this->products = Product::where('name', 'like', '%' . $this->searchProduct . '%')
+                  ->orWhere('sku', 'like', '%' . $this->searchProduct . '%')
+                  ->limit(5)
+                  ->get();
+        } else {
+            $this->products = [];
+        }
+
+        // Jika mengubah kolom pencarian lokasi
+        if ($name === 'searchLocation' && strlen($this->searchLocation) > 1) {
+            $this->locations = Location::where('name', 'like', '%' . $this->searchLocation . '%')
+                ->limit(5)
+                ->get();
+        } else {
+            $this->locations = [];
+        }
+    }
+
+    /**
+     * Mengisi form setelah produk dipilih dari dropdown dan menutup dropdown.
+     */
+    public function selectProductAndClose($productId, $productName)
+    {
+        $this->productId = $productId;
+        $this->searchProduct = $productName;
+        $this->products = []; // Sembunyikan dropdown
+    }
+
+    /**
+     * Mengisi form setelah lokasi dipilih dari dropdown dan menutup dropdown.
+     */
+    public function selectLocationAndClose($locationId, $locationName)
+    {
+        $this->locationId = $locationId;
+        $this->searchLocation = $locationName;
+        $this->locations = []; // Sembunyikan dropdown
+    }
+
+    /**
+     * Membuat LPN unik berdasarkan tanggal hari ini.
+     */
     public function generateLpn()
     {
-        // Format: YYYYMMDD-XXX (XXX adalah nomor urut harian)
         $datePart = Carbon::now()->format('Ymd');
         $lastBatch = InventoryBatch::where('lpn', 'like', $datePart . '-%')->latest('id')->first();
         
@@ -42,14 +93,15 @@ class Receive extends Component
         return $datePart . '-' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
     }
 
+    /**
+     * Memproses penerimaan produk.
+     */
     public function receiveProduct()
     {
         $this->validate();
 
-        // 1. Generate LPN
         $lpn = $this->generateLpn();
 
-        // 2. Simpan ke inventory_batches
         $batch = InventoryBatch::create([
             'lpn' => $lpn,
             'product_id' => $this->productId,
@@ -59,44 +111,34 @@ class Receive extends Component
             'expiry_date' => $this->expiry_date,
         ]);
 
-        // 3. Catat transaksi di inventory_movements
         InventoryMovement::create([
             'inventory_batch_id' => $batch->id,
             'type' => 'INBOUND',
-            'quantity_change' => $this->quantity, // Kuantitas masuk adalah positif
+            'quantity_change' => $this->quantity,
             'to_location_id' => $this->locationId,
             'user_id' => Auth::id(),
         ]);
 
-        // 4. Reset form dan beri notifikasi
-        $this->reset(['productId', 'locationId', 'quantity', 'expiry_date', 'searchProduct', 'searchLocation']);
-        
         $this->dispatch('alert', [
             'type' => 'success',
             'message' => "Barang berhasil diterima dengan LPN: " . $lpn,
         ]);
+        
+        $this->resetForm();
+    }
+    
+    /**
+     * Mengosongkan semua input pada form.
+     */
+    public function resetForm()
+    {
+        $this->reset(['productId', 'locationId', 'quantity', 'expiry_date', 'searchProduct', 'searchLocation', 'products', 'locations']);
     }
 
     public function render()
     {
-        $products = Product::query()
-            ->when($this->searchProduct, function ($query) {
-                $query->where('name', 'like', '%' . $this->searchProduct . '%')
-                      ->orWhere('sku', 'like', '%' . $this->searchProduct . '%');
-            })
-            ->limit(5)
-            ->get();
-
-        $locations = Location::query()
-            ->when($this->searchLocation, function ($query) {
-                $query->where('name', 'like', '%' . $this->searchLocation . '%');
-            })
-            ->limit(5)
-            ->get();
-
         return view('livewire.inbound.receive', [
-            'products' => $products,
-            'locations' => $locations
+            // Properti 'products' dan 'locations' sudah di-handle oleh fungsi updated()
         ])->layout('layouts.app');
     }
 }

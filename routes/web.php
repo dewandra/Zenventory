@@ -42,6 +42,7 @@ Route::middleware('auth')->group(function () {
     
     // Outbound
     Route::get('/orders', \App\Livewire\Order\Index::class)->name('orders.index')->middleware('can:perform outbound');
+    Route::get('/history/orders', \App\Livewire\History\OrderHistory::class)->name('history.orders')->middleware('can:view reports');
     Route::get('/outbound/allocation', \App\Livewire\Outbound\Allocation::class)->name('outbound.allocation')->middleware('can:perform outbound');
 
     // Inventory Control

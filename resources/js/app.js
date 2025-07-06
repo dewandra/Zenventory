@@ -1,4 +1,6 @@
 import './bootstrap';
+import ApexCharts from 'apexcharts'; // <-- Tambahkan baris ini
+window.ApexCharts = ApexCharts; 
 
 import 'sweetalert2/dist/sweetalert2.min.css';
 import Swal from 'sweetalert2';

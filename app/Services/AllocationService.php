@@ -45,6 +45,7 @@ class AllocationService
             $quantityToPick = min($batch->quantity, $remainingNeeded);
 
             $picklist->push([
+                'product_id' => $batch->product_id,
                 'batch_id' => $batch->id,
                 'lpn' => $batch->lpn,
                 'location_id' => $batch->location->id,

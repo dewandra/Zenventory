@@ -9,7 +9,7 @@
             <div class="flex items-center gap-x-4">
                 <div class="flex-grow">
                     <label for="searchOrder" class="sr-only">Cari Nomor Order</label>
-                    <x-text-input type="text" wire:model="searchOrder" wire:keydown.enter="search" id="searchOrder" class="w-full text-lg" placeholder="Masukkan Nomor Sales Order..." />
+                    <x-text-input type="text" wire:model.live="searchOrder" wire:keydown.enter="search" id="searchOrder" class="w-full text-lg" placeholder="Masukkan Nomor Sales Order..." />
                     @error('searchOrder') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
                 <button type="button" wire:click="search" wire:loading.attr="disabled" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-6 rounded-lg text-lg">
@@ -18,7 +18,7 @@
                 </button>
             </div>
         </div>
-
+        
         @if ($selectedOrder)
             <div class="border-t border-gray-200 pt-6">
                 <div class="flex justify-between items-start">
