@@ -11,7 +11,7 @@ use App\Services\AllocationService;
 use App\Exceptions\InsufficientStockException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
+use Illuminate\Support\Collection;
 
 class Allocation extends Component
 {
@@ -21,42 +21,54 @@ class Allocation extends Component
     public $allocationError = '';
 
     protected $messages = [
-        'searchOrder.required' => 'Nomor Sales Order wajib diisi sebelum mencari.',
+        'searchOrder.required' => 'Nomor Sales Order tidak boleh kosong.',
     ];
 
     public function search()
     {
-        $this->validate(['searchOrder' => 'required|string']);
-        $this->resetAll();
-        
-        // --- KODE FINAL YANG DISEDERHANAKAN ---
-        $searchTerm = trim($this->searchOrder);
-        
+        // Trim input terlebih dahulu
+        $this->searchOrder = trim($this->searchOrder);
+
+        // Validasi menggunakan Laravel
+        $this->validate([
+            'searchOrder' => 'required|string',
+        ]);
+
+        // Reset hanya variabel yang diperlukan (bukan searchOrder)
+        $this->reset(['selectedOrder', 'activePicklist', 'allocationError']);
+
+        $searchTerm = $this->searchOrder;
+
         $order = Order::with('details.product')
-                      ->where('order_number', $searchTerm)
-                      // Menggunakan whereIn biasa yang lebih stabil
-                      ->whereIn('status', ['pending', 'processing', 'Pending', 'Processing'])
-                      ->first();
+            ->whereRaw('LOWER(order_number) = ?', [strtolower($searchTerm)])
+            ->first();
 
         if ($order) {
-            $this->selectedOrder = $order;
-            $this->activePicklist = Picklist::with('items.product', 'items.location')
-                                            ->where('order_id', $order->id)
-                                            ->where('status', '!=', 'completed')
-                                            ->first();
+            $currentStatus = strtolower(trim($order->status));
+
+            if ($currentStatus === 'pending' || $currentStatus === 'processing') {
+                $this->selectedOrder = $order;
+
+                $this->activePicklist = Picklist::with('items.product', 'items.location')
+                    ->where('order_id', $order->id)
+                    ->where('status', '!=', 'completed')
+                    ->first();
+            } else {
+                $this->addError('searchOrder', 'Pesanan ditemukan, namun statusnya adalah "' . $order->status . '" dan tidak bisa diproses.');
+            }
         } else {
             $this->addError('searchOrder', 'Pesanan tidak ditemukan atau statusnya sudah selesai.');
         }
     }
 
-    // ... (SISA SEMUA FUNGSI LAINNYA TETAP SAMA SEPERTI SEBELUMNYA) ...
     public function generatePicklist(AllocationService $allocationService)
     {
         $this->allocationError = '';
         if (!$this->selectedOrder) return;
-        
+
         try {
-            $itemsToPick = new \Illuminate\Support\Collection();
+            $itemsToPick = new Collection();
+
             foreach ($this->selectedOrder->details as $detail) {
                 $allocatedItems = $allocationService->allocate($detail->product_id, $detail->quantity_requested);
                 $itemsToPick = $itemsToPick->merge($allocatedItems);
@@ -72,6 +84,7 @@ class Allocation extends Component
 
                 foreach ($itemsToPick as $item) {
                     $product = \App\Models\Product::find($item['product_id']);
+
                     $picklist->items()->create([
                         'product_id' => $item['product_id'],
                         'inventory_batch_id' => $item['batch_id'],
@@ -87,7 +100,6 @@ class Allocation extends Component
                 $this->selectedOrder->update(['status' => 'processing']);
                 $this->activePicklist = $picklist->load('items.product', 'items.location');
             });
-
         } catch (InsufficientStockException $e) {
             $this->allocationError = $e->getMessage();
         }
@@ -101,9 +113,11 @@ class Allocation extends Component
             DB::transaction(function () {
                 foreach ($this->activePicklist->items as $item) {
                     $batch = InventoryBatch::where('id', $item->inventory_batch_id)->lockForUpdate()->first();
+
                     if (!$batch || $batch->quantity < $item->quantity_to_pick) {
                         throw new \Exception("Stok untuk LPN {$item->lpn} tidak mencukupi.");
                     }
+
                     $batch->decrement('quantity', $item->quantity_to_pick);
 
                     InventoryMovement::create([
@@ -119,16 +133,28 @@ class Allocation extends Component
                 $this->selectedOrder->update(['status' => 'completed']);
             });
 
-            $this->dispatch('alert', ['type' => 'success', 'message' => 'Picking untuk Picklist ' . $this->activePicklist->picklist_number . ' berhasil.']);
+            $this->dispatch('alert', [
+                'type' => 'success',
+                'message' => 'Picking untuk Picklist ' . $this->activePicklist->picklist_number . ' berhasil.',
+            ]);
+
             $this->resetAll();
         } catch (\Exception $e) {
-            $this->dispatch('alert', ['type' => 'error', 'message' => 'Gagal: ' . $e->getMessage()]);
+            $this->dispatch('alert', [
+                'type' => 'error',
+                'message' => 'Gagal: ' . $e->getMessage(),
+            ]);
         }
     }
 
     public function resetAll()
     {
-        $this->reset(['searchOrder', 'selectedOrder', 'activePicklist', 'allocationError']);
+        $this->reset([
+            'searchOrder',
+            'selectedOrder',
+            'activePicklist',
+            'allocationError',
+        ]);
     }
 
     public function render()

@@ -17,4 +17,14 @@ class PicklistItem extends Model
     {
         return $this->belongsTo(Picklist::class);
     }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
+
+    public function location()
+    {
+        return $this->belongsTo(Location::class);
+    }
 }
