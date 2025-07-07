@@ -1,12 +1,12 @@
 <div class="flex h-full flex-col space-y-4">
-    {{-- KARTU HEADER --}}
+    {{-- HEADER CARD --}}
     <div class="flex-shrink-0 rounded-xl bg-white p-6 shadow-lg">
         <x-page-header title="Inbound History">
             <input type="text" wire:model.live.debounce.300ms="search" placeholder="Search by LPN, Product Name, or SKU..." class="w-full sm:w-80 px-4 py-2 border rounded-md shadow-sm">
         </x-page-header>
     </div>
 
-    {{-- KARTU KONTEN / TABEL --}}
+    {{-- CONTENT CARD / TABLE --}}
     <div class="flex flex-1 flex-col rounded-xl bg-white p-6 shadow-lg">
         <div class="flex-grow overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">

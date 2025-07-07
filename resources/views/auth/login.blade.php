@@ -1,46 +1,48 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('login') }}">
+    <form method="POST" action="{{ route('login') }}" class="space-y-6">
         @csrf
 
         <div>
-            <x-input-label for="email" value="Email Address" class="font-semibold" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus />
+            <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
+            <div class="mt-1 relative rounded-md shadow-sm">
+                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                    @svg('heroicon-o-envelope', 'h-5 w-5 text-gray-400')
+                </div>
+                <x-text-input id="email" name="email" type="email" :value="old('email')" required autofocus class="block w-full pl-10" placeholder="you@example.com" />
+            </div>
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
-        <div class="mt-4">
-            <x-input-label for="password" value="Password" class="font-semibold" />
-            <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required />
+        <div>
+            <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+            <div class="mt-1 relative rounded-md shadow-sm">
+                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                    @svg('heroicon-o-lock-closed', 'h-5 w-5 text-gray-400')
+                </div>
+                <x-text-input id="password" name="password" type="password" required class="block w-full pl-10" placeholder="Your Password" />
+            </div>
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
-        <div class="flex items-center justify-between mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500" name="remember">
-                <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
-            </label>
+        <div class="flex items-center justify-between">
+            <div class="flex items-center">
+                <input id="remember_me" name="remember" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                <label for="remember_me" class="ml-2 block text-sm text-gray-900">Remember me</label>
+            </div>
 
             @if (Route::has('password.request'))
-                <a class="underline text-sm text-blue-600 hover:text-blue-800" href="{{ route('password.request') }}" wire:navigate>
-                    {{ __('Forgot your password?') }}
-                </a>
+                <div class="text-sm">
+                    <a href="{{ route('password.request') }}" class="font-medium text-blue-600 hover:text-blue-500">
+                        Forgot your password?
+                    </a>
+                </div>
             @endif
         </div>
 
-        <div class="mt-8">
-            <button type="submit" class="w-full inline-flex items-center justify-center px-4 py-3 bg-blue-600 border border-transparent rounded-lg font-semibold text-base text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150">
-                {{ __('Log in') }}
+        <div>
+            <button type="submit" class="group relative flex w-full justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                Sign in
             </button>
-        </div>
-
-        {{-- (Opsional) Tambahkan pemisah atau link register --}}
-        <div class="text-center mt-6">
-            <p class="text-sm text-gray-500">
-                Don't have an account? 
-                <a href="{{ route('register') }}" wire:navigate class="font-medium text-blue-600 hover:text-blue-500">
-                    Sign up
-                </a>
-            </p>
         </div>
     </form>
 </x-guest-layout>
