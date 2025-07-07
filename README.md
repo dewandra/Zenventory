@@ -1,101 +1,135 @@
-# WMS Pro - Warehouse Management System
+# Zenventory - Sistem Manajemen Gudang Modern
 
-Sistem manajemen gudang standalone untuk operasional yang presisi dengan metode FIFO/FEFO, dibangun menggunakan Laravel & Livewire.
+Zenventory adalah **sistem manajemen gudang (WMS)** yang dirancang untuk memberikan presisi dan efisiensi dalam operasional gudang Anda. Dibangun dengan tumpukan teknologi modern, Zenventory mengimplementasikan metode pelacakan inventaris canggih seperti **FIFO (First-In, First-Out)** dan **FEFO (First-Expired, First-Out)** untuk memastikan kontrol kualitas dan akurasi stok yang superior.
 
----
+Aplikasi ini sangat cocok untuk **Usaha Kecil Menengah (UKM)** dan distributor yang ingin beralih dari manajemen inventaris manual ke sistem yang lebih terstruktur, otomatis, dan dapat diandalkan tanpa memerlukan investasi besar pada perangkat keras khusus.
 
-## 📖 Deskripsi Singkat
-
-WMS Pro adalah aplikasi web yang dirancang untuk menggantikan pengelolaan inventaris manual atau berbasis Spreadsheet. Sistem ini ditujukan untuk UKM dan distributor yang sedang bertumbuh, yang membutuhkan kontrol, akurasi, dan efisiensi dalam operasional gudang mereka. Proyek ini mengimplementasikan disiplin dan visibilitas setara sistem enterprise tanpa memerlukan investasi pada hardware scanner atau integrasi software eksternal yang mahal.
+![Dashboard Aplikasi Zenventory](public/img/dashboard.jpeg)
 
 ---
 
-## 🛠️ Tumpukan Teknologi (Tech Stack)
+## 🚀 Fitur Unggulan
+
+Zenventory dilengkapi dengan berbagai fitur canggih untuk mengoptimalkan setiap aspek operasional gudang Anda:
+
+* **Dashboard Analitis**: Dapatkan ringkasan visual instan mengenai KPI gudang, termasuk status pesanan, level stok, dan aktivitas inbound/outbound harian.
+* **Manajemen Master Data Terpusat**:
+    * **Produk**: Kelola data produk lengkap dengan SKU, nama, dan deskripsi.
+    * **Lokasi Gudang**: Definisikan topologi gudang Anda secara hierarkis (`Zona > Lorong > Rak > Bin`) untuk penempatan dan pengambilan barang yang presisi.
+* **Proses Inbound (Penerimaan Barang) Efisien**:
+    * Catat penerimaan barang dengan mudah dan hasilkan **License Plate Number (LPN)** unik untuk setiap *batch* guna pelacakan yang akurat.
+    * Lihat riwayat lengkap semua barang yang masuk untuk transparansi penuh.
+* **Proses Outbound (Pengeluaran Barang) Otomatis**:
+    * Kelola pesanan penjualan (*Sales Orders*) dari pelanggan.
+    * Sistem **alokasi stok cerdas** secara otomatis merekomendasikan LPN mana yang harus diambil berdasarkan aturan FIFO/FEFO untuk mengurangi pemborosan.
+    * Hasilkan *picklist* yang teroptimasi untuk mempercepat proses pengambilan barang di gudang.
+* **Kontrol Inventaris Superior**:
+    * Lacak riwayat pergerakan setiap LPN dari penerimaan hingga pengiriman.
+    * Lakukan **Cycle Count** untuk menjaga akurasi data stok dengan penghitungan fisik secara berkala.
+    * Sesuaikan kuantitas stok dengan mudah jika terjadi ketidaksesuaian melalui fitur **Stock Adjustment**.
+* **Manajemen Retur**: Kelola barang yang dikembalikan oleh pelanggan dan tentukan apakah akan di-*restock* atau dihapus dari inventaris.
+* **Manajemen Pengguna & Hak Akses**: Atur peran pengguna (Admin, Manager, Staff) dengan hak akses yang dapat disesuaikan untuk menjaga keamanan data.
+
+---
+
+## 🛠️ Tumpukan Teknologi
 
 * **Backend**: Laravel 11
-* **Frontend**: Livewire 3 & Tailwind CSS
-* **Database**: MySQL
+* **Frontend**: Livewire 3 & Alpine.js
+* **UI Framework**: Tailwind CSS
+* **Database**: MySQL / MariaDB
+* **Pustaka Tambahan**:
+    * `livewire/livewire`: Untuk komponen frontend yang dinamis.
+    * `spatie/laravel-permission`: Untuk manajemen peran dan hak akses.
+    * `blade-ui-kit/blade-heroicons`: Untuk ikon antarmuka yang modern.
+    * `sweetalert2`: Untuk notifikasi dan konfirmasi yang interaktif.
+    * `apexcharts`: Untuk visualisasi data dan laporan.
 
 ---
 
-## ✨ Fitur Utama (Key Features)
+## 🖼️ Dokumentasi Visual Aplikasi
 
-### Manajamen Data Master
-* **Produk**: CRUD untuk produk, termasuk SKU, nama, satuan, dan penanda **wajib tanggal kedaluwarsa**.
-* **Lokasi (Topologi Gudang)**: Pengelolaan hierarki gudang secara detail (`Zone > Aisle > Rack > Bin`) untuk penempatan barang yang presisi.
-* **Pengguna & Peran**: Manajemen user dan hak akses (Admin, Manager, Staff).
+Berikut adalah tangkapan layar dari beberapa modul utama di dalam Zenventory:
 
-### Proses Inbound (Penerimaan Barang)
-* **Pencatatan Penerimaan**: Mencatat barang masuk berdasarkan Purchase Order (PO).
-* **Generasi LPN (License Plate Number)**: Sistem otomatis membuat kode unik (LPN) untuk setiap batch barang yang diterima.
-* **Put-Away Terarah (Directed Put-Away)**: Sistem secara cerdas memberikan rekomendasi lokasi penyimpanan (bin) terbaik untuk setiap LPN.
-
-### Proses Outbound (Pengeluaran Barang)
-* **Manajemen Pesanan**: Mencatat Sales Order (SO) dari customer.
-* **Alokasi Stok Otomatis (FIFO/FEFO)**: Otak sistem yang secara otomatis memilih batch LPN tertua atau dengan tanggal kedaluwarsa terdekat.
-* **Wave Picking**: Kemampuan untuk mengelompokkan beberapa pesanan untuk di-pick secara bersamaan demi efisiensi.
-* **Picklist Teroptimasi**: Menghasilkan daftar pengambilan barang tercetak yang urutannya telah dioptimalkan berdasarkan rute terpendek di gudang.
-
-### Kontrol Inventaris
-* **Pelacakan LPN**: Kemampuan untuk mencari dan melihat riwayat lengkap setiap LPN.
-* **Cycle Counting**: Fitur untuk melakukan penghitungan stok secara berkala dan terjadwal.
-* **Penyesuaian & Perpindahan Stok**: Fitur untuk menyesuaikan stok dan mencatat perpindahan barang antar-bin.
-
-### Dashboard & Laporan
-* **Dashboard KPI**: Ringkasan visual kondisi gudang.
-* **Laporan Kunci**: Laporan Umur Stok (Inventory Aging), riwayat transaksi, dan nilai inventaris.
-* **Ekspor Data**: Semua laporan utama dapat diekspor ke format CSV/Excel.
+| Modul | Tampilan Antarmuka |
+| :------------------------- | :---------------------------------------------------------- |
+| **Manajemen Produk** | ![Manajemen Produk](public/img/product-management.jpeg) |
+| **Manajemen Sales Order** | ![Manajemen Sales Order](public/img/sales_order_management.jpeg)|
+| **Penerimaan Barang (Inbound)** | ![Penerimaan Barang](public/img/receive_item.jpeg) |
+| **Riwayat Inbound** | ![Riwayat Inbound](public/img/inbound_history.jpeg) |
+| **Alokasi & Picking (Outbound)** | ![Alokasi & Picking](public/img/allocate_pick.jpeg) |
+| **Riwayat Outbound** | ![Riwayat Outbound](public/img/outbound_history.jpeg) |
+| **Pelacakan LPN** | ![Pelacakan LPN](public/img/trace_lpn.jpeg) |
+| **Detail Stok per Produk** | ![Detail Stok](public/img/stock_detail.jpeg) |
+| **Penyesuaian Stok** | ![Penyesuaian Stok](public/img/stock_adjustment.jpeg) |
+| **Cycle Counting** | ![Cycle Counting](public/img/cycle_counting.jpeg) |
 
 ---
 
-## 🚀 Instalasi & Setup Lokal
+## ⚙️ Instalasi dan Menjalankan Aplikasi
 
-Untuk menjalankan proyek ini di lingkungan lokal Anda, ikuti langkah-langkah berikut:
+Ikuti langkah-langkah berikut untuk menjalankan Zenventory di lingkungan lokal Anda.
 
-1.  **Clone repositori:**
+### Prasyarat
+
+* PHP 8.2 atau lebih tinggi
+* Composer
+* Node.js & NPM
+* Database (MySQL atau MariaDB)
+
+### Langkah-langkah Instalasi
+
+1.  **Clone Repositori**
     ```bash
-    git clone [https://github.com/your-username/your-repo-name.git](https://github.com/your-username/your-repo-name.git)
-    cd your-repo-name
+    git clone [https://github.com/dewandra/zenventory.git](https://github.com/dewandra/zenventory.git)
+    cd zenventory
     ```
 
-2.  **Instal dependensi Composer:**
+2.  **Instal Dependensi PHP**
     ```bash
     composer install
     ```
 
-3.  **Buat file `.env`:**
+3.  **Instal Dependensi JavaScript**
+    ```bash
+    npm install
+    ```
+
+4.  **Buat File Konfigurasi Lingkungan (`.env`)**
     ```bash
     cp .env.example .env
     ```
 
-4.  **Generate application key:**
+5.  **Hasilkan Kunci Aplikasi**
     ```bash
     php artisan key:generate
     ```
 
-5.  **Konfigurasi database Anda di file `.env`:**
-    ```
+6.  **Konfigurasi Database**
+    Buka file `.env` dan atur koneksi database Anda. Pastikan nama database sudah Anda buat sebelumnya.
+    ```env
     DB_CONNECTION=mysql
     DB_HOST=127.0.0.1
     DB_PORT=3306
-    DB_DATABASE=wms_pro
+    DB_DATABASE=zenventory
     DB_USERNAME=root
     DB_PASSWORD=
     ```
 
-6.  **Jalankan migrasi database:**
+7.  **Jalankan Migrasi dan Seeder Database**
+    Perintah ini akan membuat semua tabel yang dibutuhkan dan mengisinya dengan data contoh (pengguna admin, produk, lokasi, dll).
     ```bash
-    php artisan migrate
+    php artisan migrate --seed
     ```
 
-7.  **(Opsional) Jalankan seeder untuk data dummy:**
+8.  **Jalankan Build Aset Frontend**
     ```bash
-    php artisan db:seed
+    npm run build
     ```
 
-8.  **Jalankan server pengembangan:**
-    ```bash
-    php artisan serve
-    ```
+### Menjalankan Server Pengembangan
 
-Aplikasi sekarang akan berjalan di `http://127.0.0.1:8000`.
+Buka terminal Anda dan jalankan perintah `dev` yang sudah disediakan untuk menjalankan semua layanan (server PHP, Vite, dan queue worker) secara bersamaan.
+
+```bash
+composer run dev
