@@ -29,10 +29,10 @@ class Index extends Component
     ];
 
     protected $messages = [
-        'details.required' => 'Pesanan harus memiliki setidaknya satu produk.',
-        'details.*.product_id.required' => 'Silakan pilih produk.',
-        'details.*.quantity_requested.required' => 'Jumlah harus diisi.',
-        'details.*.quantity_requested.min' => 'Jumlah minimal 1.',
+        'details.required' => 'The order must have at least one product.',
+        'details.*.product_id.required' => 'Please select a product.',
+        'details.*.quantity_requested.required' => 'The quantity must be filled.',
+        'details.*.quantity_requested.min' => 'The minimum quantity is 1.',
     ];
 
     public function mount()
@@ -120,7 +120,7 @@ class Index extends Component
 
         $this->dispatch('alert', [
             'type' => 'success',
-            'message' => $this->orderId ? 'Pesanan berhasil diperbarui.' : 'Pesanan berhasil dibuat.'
+            'message' => $this->orderId ? 'Order successfully updated.' : 'Order successfully created.'
         ]);
 
         $this->dispatch('close-modal', 'order-form');
