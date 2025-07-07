@@ -1,8 +1,8 @@
 <div class="space-y-6">
     <div class="bg-white p-6 shadow-md rounded-lg">
-        <x-page-header title="Manajemen Sales Order">
+        <x-page-header title="Sales Order Management">
             <button wire:click="create" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">
-                + Buat Pesanan Baru
+                + Create New Order
             </button>
         </x-page-header>
     </div>
@@ -10,18 +10,18 @@
     <x-modal name="order-form" max-width="4xl" :show="$errors->isNotEmpty()" focusable>
         <form wire:submit.prevent="store" class="p-6">
             <h2 class="text-2xl font-bold text-gray-900 mb-6">
-                {{ $orderId ? 'Edit Pesanan' : 'Buat Pesanan Baru' }}
+                {{ $orderId ? 'Edit Order' : 'Create New Order' }}
             </h2>
 
             <div class="space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
-                        <x-input-label for="order_number" value="Nomor Pesanan (SO)" />
+                        <x-input-label for="order_number" value="Order Number (SO)" />
                         <x-text-input id="order_number" wire:model="order_number" class="mt-1 block w-full" />
                         @error('order_number') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
                     <div>
-                        <x-input-label for="customer_name" value="Nama Pelanggan" />
+                        <x-input-label for="customer_name" value="Customer Name" />
                         <x-text-input id="customer_name" wire:model="customer_name" class="mt-1 block w-full" />
                         @error('customer_name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
@@ -38,17 +38,17 @@
                 </div>
 
                 <div class="border-t pt-6">
-                    <h3 class="font-semibold text-lg">Detail Produk</h3>
+                    <h3 class="font-semibold text-lg">Product Details</h3>
                     @error('details') <div class="text-red-500 text-sm mt-2">{{ $message }}</div> @enderror
 
                     <div class="mt-4 space-y-4">
                         @foreach ($details as $index => $detail)
                             <div class="flex items-start gap-4 p-4 bg-gray-50 rounded-md" wire:key="detail-{{ $index }}">
                                 <div class="flex-grow relative">
-                                    <x-input-label value="Produk" />
+                                    <x-input-label value="Product" />
                                     <x-text-input type="text"
                                         wire:model.live.debounce.300ms="details.{{ $index }}.product_name"
-                                        placeholder="Ketik untuk mencari produk..."
+                                        placeholder="Type to search for a product..."
                                         class="w-full mt-1" />
                                     @if(!empty($products) && $errors->isEmpty())
                                     <div class="absolute z-10 w-full bg-white border rounded-md mt-1 max-h-48 overflow-y-auto">
@@ -62,25 +62,25 @@
                                      @error('details.'.$index.'.product_id') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                 </div>
                                 <div style="width: 120px;">
-                                    <x-input-label value="Jumlah" />
+                                    <x-input-label value="Quantity" />
                                     <x-text-input type="number" wire:model="details.{{ $index }}.quantity_requested" class="w-full mt-1" />
                                     @error('details.'.$index.'.quantity_requested') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                 </div>
                                 <div class="pt-7">
                                     <button type="button" wire:click="removeDetail({{ $index }})" class="text-red-500 hover:text-red-700">
-                                        Hapus
+                                        Remove
                                     </button>
                                 </div>
                             </div>
                         @endforeach
                     </div>
-                    <button type="button" wire:click="addDetail" class="mt-4 text-sm text-blue-600 hover:underline">+ Tambah Produk</button>
+                    <button type="button" wire:click="addDetail" class="mt-4 text-sm text-blue-600 hover:underline">+ Add Product</button>
                 </div>
             </div>
 
             <div class="mt-8 flex justify-end">
-                <x-secondary-button x-on:click="$dispatch('close')">Batal</x-secondary-button>
-                <x-primary-button class="ms-3">{{ $orderId ? 'Perbarui' : 'Simpan' }}</x-primary-button>
+                <x-secondary-button x-on:click="$dispatch('close')">Cancel</x-secondary-button>
+                <x-primary-button class="ms-3">{{ $orderId ? 'Update' : 'Save' }}</x-primary-button>
             </div>
         </form>
     </x-modal>
@@ -90,10 +90,10 @@
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nomor SO</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Pelanggan</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">SO Number</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tanggal</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
@@ -113,7 +113,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="px-6 py-4 text-center text-gray-500">Belum ada pesanan.</td>
+                            <td colspan="4" class="px-6 py-4 text-center text-gray-500">No orders yet.</td>
                         </tr>
                     @endforelse
                 </tbody>

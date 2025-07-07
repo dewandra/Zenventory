@@ -1,7 +1,6 @@
 <div class="flex h-full flex-col space-y-4">
-    {{-- KARTU HEADER --}}
+    {{-- HEADER CARD --}}
     <div class="flex-shrink-0 rounded-lg bg-white p-6 shadow-md">
-        {{-- Mengubah judul, placeholder, dan teks tombol agar konsisten --}}
         <x-page-header title="Location Management">
             <input type="text" wire:model.live.debounce.300ms="search" placeholder="Search by Location Name..." class="w-full sm:w-64 px-4 py-2 border rounded-md shadow-sm">
             @can('manage locations')
@@ -12,7 +11,7 @@
         </x-page-header>
     </div>
 
-    {{-- KARTU KONTEN --}}
+    {{-- CONTENT CARD --}}
     <div class="flex flex-1 flex-col rounded-lg bg-white p-6 shadow-md">
         <x-modal name="location-form" :show="$errors->isNotEmpty()" focusable>
             <form wire:submit.prevent="store" class="p-6">
@@ -23,7 +22,7 @@
                 <div class="mt-6 space-y-4">
                     <div>
                         <x-input-label for="name" value="Location Name (Unique):" />
-                        <x-text-input id="name" wire:model="name" class="mt-1 block w-full" placeholder="Contoh: Z1-A01-R01-B01" />
+                        <x-text-input id="name" wire:model="name" class="mt-1 block w-full" placeholder="Example: Z1-A01-R01-B01" />
                         @error('name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
                     <div class="grid grid-cols-2 gap-4">
@@ -32,17 +31,17 @@
                             <x-text-input id="zone" wire:model="zone" class="mt-1 block w-full" />
                         </div>
                         <div>
-                            <x-input-label for="aisle" value="Aisle (Lorong):" />
+                            <x-input-label for="aisle" value="Aisle:" />
                             <x-text-input id="aisle" wire:model="aisle" class="mt-1 block w-full" />
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <x-input-label for="rack" value="Rack (Rak):" />
+                            <x-input-label for="rack" value="Rack:" />
                             <x-text-input id="rack" wire:model="rack" class="mt-1 block w-full" />
                         </div>
                         <div>
-                            <x-input-label for="bin" value="Bin (Ambalan):" />
+                            <x-input-label for="bin" value="Bin:" />
                             <x-text-input id="bin" wire:model="bin" class="mt-1 block w-full" />
                         </div>
                     </div>
