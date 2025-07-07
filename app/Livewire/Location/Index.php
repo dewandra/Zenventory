@@ -24,6 +24,13 @@ class Index extends Component
         'rack' => 'nullable|string',
         'bin' => 'nullable|string',
     ];
+
+    // --- PESAN ERROR BARU ---
+    protected $messages = [
+        'name.required' => 'The location name field is required.',
+        'name.unique' => 'The location name has already been taken.',
+    ];
+    // --- AKHIR PERUBAHAN ---
     
     public function updatedSearch()
     {
@@ -75,11 +82,11 @@ class Index extends Component
 
         $this->dispatch('alert', [
             'type' => 'success',
-            'message' => $this->locationId ? 'Lokasi berhasil diperbarui.' : 'Lokasi berhasil dibuat.'
+            'message' => $this->locationId ? 'Location successfully updated.' : 'Location successfully created.'
         ]);
 
         $this->closeModal();
-        $this->resetInputFields(); // Pastikan reset dipanggil di sini juga
+        $this->resetInputFields();
     }
 
     public function edit($id)
@@ -104,6 +111,6 @@ class Index extends Component
     public function delete($id)
     {
         Location::find($id)->delete();
-        $this->dispatch('alert', ['type' => 'success', 'message' => 'Lokasi berhasil dihapus.']);
+        $this->dispatch('alert', ['type' => 'success', 'message' => 'Location successfully deleted.']);
     }
 }

@@ -11,6 +11,12 @@ class OrderHistory extends Component
     public ?Order $foundOrder = null;
     public $picklists = [];
 
+    // --- PESAN ERROR BARU ---
+    protected $messages = [
+        'searchTerm.required' => 'The Sales Order number field cannot be empty.',
+    ];
+    // --- AKHIR PERUBAHAN ---
+
     public function search()
     {
         $this->validate(['searchTerm' => 'required|string']);
@@ -18,16 +24,15 @@ class OrderHistory extends Component
 
         $term = trim($this->searchTerm);
 
-        // Cari pesanan berdasarkan nomornya, tanpa filter status
         $order = Order::with(['details.product', 'picklists.items'])
                       ->whereRaw('LOWER(order_number) = ?', [strtolower($term)])
                       ->first();
 
         if ($order) {
             $this->foundOrder = $order;
-            $this->picklists = $order->picklists; // Ambil picklist dari relasi
+            $this->picklists = $order->picklists;
         } else {
-            $this->addError('searchTerm', 'Sales Order dengan nomor ini tidak ditemukan.');
+            $this->addError('searchTerm', 'Sales Order with this number was not found.');
         }
     }
 

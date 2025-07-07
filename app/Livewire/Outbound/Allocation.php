@@ -21,7 +21,7 @@ class Allocation extends Component
     public $allocationError = '';
 
     protected $messages = [
-        'searchOrder.required' => 'Nomor Sales Order tidak boleh kosong.',
+        'searchOrder.required' => 'The Sales Order number cannot be empty.',
     ];
 
     public function search()
@@ -54,10 +54,10 @@ class Allocation extends Component
                     ->where('status', '!=', 'completed')
                     ->first();
             } else {
-                $this->addError('searchOrder', 'Pesanan ditemukan, namun statusnya adalah "' . $order->status . '" dan tidak bisa diproses.');
+                $this->addError('searchOrder', 'Order found, but its status is "' . $order->status . '" and cannot be processed.');
             }
         } else {
-            $this->addError('searchOrder', 'Pesanan tidak ditemukan atau statusnya sudah selesai.');
+            $this->addError('searchOrder', 'Order not found or its status is already completed.');
         }
     }
 
@@ -115,7 +115,7 @@ class Allocation extends Component
                     $batch = InventoryBatch::where('id', $item->inventory_batch_id)->lockForUpdate()->first();
 
                     if (!$batch || $batch->quantity < $item->quantity_to_pick) {
-                        throw new \Exception("Stok untuk LPN {$item->lpn} tidak mencukupi.");
+                        throw new \Exception("Insufficient stock for LPN {$item->lpn}.");
                     }
 
                     $batch->decrement('quantity', $item->quantity_to_pick);
@@ -135,14 +135,14 @@ class Allocation extends Component
 
             $this->dispatch('alert', [
                 'type' => 'success',
-                'message' => 'Picking untuk Picklist ' . $this->activePicklist->picklist_number . ' berhasil.',
+                'message' => 'Picking for Picklist ' . $this->activePicklist->picklist_number . ' completed successfully.',
             ]);
 
             $this->resetAll();
         } catch (\Exception $e) {
             $this->dispatch('alert', [
                 'type' => 'error',
-                'message' => 'Gagal: ' . $e->getMessage(),
+                'message' => 'Failed: ' . $e->getMessage(),
             ]);
         }
     }

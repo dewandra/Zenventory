@@ -24,6 +24,15 @@ class Index extends Component
         'description' => 'nullable|string',
     ];
 
+    // --- PERUBAHAN DI SINI ---
+    // Menambahkan pesan error kustom dalam Bahasa Inggris
+    protected $messages = [
+        'sku.required' => 'The SKU field cannot be empty.',
+        'sku.unique' => 'This SKU has already been taken.',
+        'name.required' => 'The Product Name field cannot be empty.',
+    ];
+    // --- AKHIR PERUBAHAN ---
+
 
     public function updatedSearch()
     {
@@ -82,7 +91,7 @@ class Index extends Component
 
         $this->dispatch('alert', [
             'type' => 'success',
-            'message' => $this->productId ? 'Produk berhasil diperbarui.' : 'Produk berhasil dibuat.'
+            'message' => $this->productId ? 'Product successfully updated.' : 'Product successfully created.'
         ]);
 
         $this->closeModal();
@@ -105,12 +114,6 @@ class Index extends Component
         $this->dispatch('show-delete-confirmation', $id);
     }
 
-    // #[On('delete-confirmed')]
-    // public function delete($id)
-    // {
-    //     Product::find($id)->delete();
-    //     $this->dispatch('alert', ['type' => 'success', 'message' => 'Produk berhasil dihapus.']);
-    // }
     #[On('delete-confirmed')]
     public function delete($id)
     {
@@ -122,7 +125,7 @@ class Index extends Component
             // --- END LOGGING ---
 
             $product->delete();
-            $this->dispatch('alert', ['type' => 'success', 'message' => 'Produk berhasil dihapus.']);
+            $this->dispatch('alert', ['type' => 'success', 'message' => 'Product successfully deleted.']);
         }
     }
 }

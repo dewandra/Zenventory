@@ -26,7 +26,7 @@ class Adjustment extends Component
             $this->selectedBatch = $batch;
             $this->newQuantity = $batch->quantity; // Isi kuantitas baru dengan kuantitas saat ini
         } else {
-            $this->addError('searchLpn', 'LPN tidak ditemukan di dalam sistem.');
+            $this->addError('searchLpn', 'LPN not found in the system.');
         }
     }
 
@@ -48,7 +48,7 @@ class Adjustment extends Component
         if ($quantityChange == 0) {
             $this->dispatch('alert', [
                 'type' => 'warning',
-                'message' => 'Tidak ada perubahan kuantitas yang dibuat.',
+                'message' => 'No quantity change was made.',
             ]);
             return;
         }
@@ -71,7 +71,7 @@ class Adjustment extends Component
 
             $this->dispatch('alert', [
                 'type' => 'success',
-                'message' => 'Penyesuaian stok berhasil disimpan. Stok baru: ' . $this->newQuantity,
+                'message' => 'Stock adjustment saved successfully. New stock: ' . $this->newQuantity,
             ]);
 
             $this->resetAll();
@@ -79,7 +79,7 @@ class Adjustment extends Component
         } catch (\Exception $e) {
             $this->dispatch('alert', [
                 'type' => 'error',
-                'message' => 'Gagal menyimpan penyesuaian: ' . $e->getMessage(),
+                'message' => 'Failed to save adjustment: ' . $e->getMessage(),
             ]);
         }
     }
