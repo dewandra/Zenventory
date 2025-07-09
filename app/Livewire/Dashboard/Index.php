@@ -7,6 +7,7 @@ use App\Models\InventoryBatch;
 use App\Models\InventoryMovement;
 use App\Models\Order;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class Index extends Component
@@ -28,12 +29,18 @@ class Index extends Component
     public function loadData()
     {
         // 1. KPI Cards
-        $this->totalOrdersPending = Order::where('status', 'pending')->count();
-        $this->lowStockItemsCount = InventoryBatch::selectRaw('product_id, SUM(quantity) as total_stock')
-            ->groupBy('product_id')
-            ->having('total_stock', '<', 10)
-            ->get()->count();
-        $this->inboundToday = InventoryMovement::where('type', 'INBOUND')->whereDate('created_at', Carbon::today())->sum('quantity_change');
+        $this->totalOrdersPending = Cache::remember('dashboard.totalOrdersPending', now()->addMinutes(10), function () {
+            return Order::where('status', 'pending')->count();
+        });
+        $this->lowStockItemsCount = Cache::remember('dashboard.lowStockItemsCount', now()->addMinutes(10), function () {
+            return InventoryBatch::selectRaw('product_id, SUM(quantity) as total_stock')
+                ->groupBy('product_id')
+                ->having('total_stock', '<', 10)
+                ->get()->count();
+        });
+        $this->inboundToday = Cache::remember('dashboard.inboundToday', now()->addMinutes(10), function () {
+            return InventoryMovement::where('type', 'INBOUND')->whereDate('created_at', Carbon::today())->sum('quantity_change');
+        });
 
         // 2. Data untuk Chart Baru
         $this->prepareInboundOutboundChart();

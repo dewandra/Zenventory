@@ -111,8 +111,15 @@ class Allocation extends Component
 
         try {
             DB::transaction(function () {
+
+                // Ambil semua ID batch terlebih dahulu
+            $batchIds = $this->activePicklist->items->pluck('inventory_batch_id');
+
+            // Ambil semua data batch dalam satu kali query
+            $batches = InventoryBatch::whereIn('id', $batchIds)->lockForUpdate()->get()->keyBy('id');
+
                 foreach ($this->activePicklist->items as $item) {
-                    $batch = InventoryBatch::where('id', $item->inventory_batch_id)->lockForUpdate()->first();
+                    $batch = $batches->get($item->inventory_batch_id);
 
                     if (!$batch || $batch->quantity < $item->quantity_to_pick) {
                         throw new \Exception("Insufficient stock for LPN {$item->lpn}.");
